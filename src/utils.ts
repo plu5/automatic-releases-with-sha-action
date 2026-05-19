@@ -79,7 +79,7 @@ export type ParsedCommits = {
 const mentionsAllPRs = (parsedCommit: ParsedCommits): boolean => {
   for (const pr of parsedCommit.extra.pullRequests) {
     // #5 or GH-5 (where 5 is pr.number)
-    if (!parsedCommit.header.match(`.*(^| )(#|GH-)${pr.number}($| ).*`)) {
+    if (!parsedCommit.header.match(`.*(^|[^\w])(#|GH-)${pr.number}($|[^\w]).*`)) {
       return false;
     }
   }
