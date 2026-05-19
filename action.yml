@@ -29,6 +29,16 @@ inputs:
   files:
     description: "Assets to upload to the release"
     required: false
+  excluded_types:
+    description: "Conventional Commit types to exclude from the changelog"
+    required: false
+  preamble:
+    description: "Markdown to optionally prepend to the changelog"
+    required: false
+  force:
+    description: "Force release even if release for tag already exists"
+    required: false
+    default: false
 outputs:
   automatic_releases_tag:
     description: "The release tag this action just processed"
