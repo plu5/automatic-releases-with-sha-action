@@ -46,7 +46,7 @@ const getAndValidateArgs = (): Args => {
 
   const inputExcludedTypesStr = core.getInput('excluded_types', {required: false});
   if (inputExcludedTypesStr) {
-    args.excludedTypes = inputExcludedTypesStr.split(/\r?\n/);
+    args.excludedTypes = inputExcludedTypesStr.split(/\r?\n| /);
   }
 
   return args;

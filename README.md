@@ -10,7 +10,7 @@ This action simplifies the GitHub release process by automatically uploading ass
 3. **Annotated tags:** Use annotated tags instead of lightweight tags, with the ability to pass the tag annotation in new optional parameter `tag_annotation`
 4. **Changelog to previous version tag:** Different behaviour with the parameter `automatic_release_tag`. In the original action if this parameter is provided, the changelog is generated between the given tag and the previous release with the same tag, resulting in an empty changelog if this is the first release with the given tag. I have changed it to generate the changelog between the given tag and previous tag, rather than the same tag: for example, between v1.0.0 and v1.0.1, rather than v1.0.1 and the previous v1.0.1 release. To get the old behaviour, use `is_tag_static: true`.
 5. **Avoid double-linking PRs:** In PR commits, avoid adding a link to the PR if it's already in the commit summary ([like #5 or GH-5](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls)) (in the original action we end up with the link appearing twice, like `fake change (#1) #1 — @plu5 in 706f6a3`. With this action, the second `#1` will not be added: `fake change (#1) — @plu5 in 706f6a3`).
-6. **Commit type exclusions:** Parameter `excluded_types` for excluding commits of given Conventional Commits types. Example: `excluded_types: [docs, chore, revert]`
+6. **Commit type exclusions:** Parameter `excluded_types` for excluding commits of given Conventional Commits types. Example: `excluded_types: docs chore revert`
 
 ## Contents
 
@@ -151,8 +151,8 @@ There are downsides to releasing on tag push:
 | `is_tag_static`         | Generate changelog from the same tag instead of previous, in case you use the same tag name every time (e.g. 'latest') | `false` |
 | `tag_annotation`        | Optional tag annotation.                                   |  ""      |
 | `title`                 | Release title; defaults to the tag name if none specified. | Tag Name |
-| `files`                 | Files to upload as part of the release assets. Supports multi-line [glob](https://github.com/isaacs/node-glob) patterns. | `[]`   |
-| `excluded_types`        | Conventional Commits types to exclude from the changelog.  | `[]`   |
+| `files`                 | Files to upload as part of the release assets. Supports multi-line [glob](https://github.com/isaacs/node-glob) patterns. Split on newlines. | ""       |
+| `excluded_types`        | Conventional Commits types to exclude from the changelog. Split on newlines and on spaces (e.g. `docs chore`). | ""       |
 
 ## Outputs
 
