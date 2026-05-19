@@ -35,7 +35,7 @@ jobs:
         run: |
           VERSION="${{ inputs.version }}"; ANNOTATION="${{ inputs.annotation }}"
           if [ -n $VERSION ]; then
-            echo "ANNOTATION=$ANNOTATION" >> $GITHUB_ENV
+            echo -e "ANNOTATION<<EOF\n$ANNOTATION\nEOF" >> $GITHUB_ENV
           else
             VERSION=`echo $(jq -r '.version' $VERSION_FILE)`
             echo "${{ github.event.head_commit.message }}" > commit_msg
