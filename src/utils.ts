@@ -75,6 +75,17 @@ export type ParsedCommits = {
   revert: boolean;
 };
 
+// Whether all PRs are already mentioned in the summary (header)
+const mentionsAllPRs = (parsedCommit: ParsedCommits): boolean => {
+  for (const pr of parsedCommit.extra.pullRequests) {
+    // #5 or GH-5 (where 5 is pr.number)
+    if (!parsedCommit.header.match(`.*(^| )(#|GH-)${pr.number}($| ).*`)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 const getFormattedChangelogEntry = (parsedCommit: ParsedCommits): string => {
   let entry = '';
 
@@ -83,17 +94,19 @@ const getFormattedChangelogEntry = (parsedCommit: ParsedCommits): string => {
   const author = parsedCommit.extra.commit.author.login;
 
   let prString = '';
-  prString = parsedCommit.extra.pullRequests.reduce((acc, pr) => {
-    // e.g. #1
-    // e.g. #1,#2
-    // e.g. ''
-    if (acc) {
-      acc += ',';
+  if (!mentionsAllPRs(parsedCommit)) {
+    prString = parsedCommit.extra.pullRequests.reduce((acc, pr) => {
+      // e.g. #1
+      // e.g. #1,#2
+      // e.g. ''
+      if (acc) {
+        acc += ',';
+      }
+      return `${acc}[#${pr.number}](${pr.url})`;
+    }, '');
+    if (prString) {
+      prString = ' ' + prString;
     }
-    return `${acc}[#${pr.number}](${pr.url})`;
-  }, '');
-  if (prString) {
-    prString = ' ' + prString;
   }
 
   entry = `- ${parsedCommit.header}${prString} — @${author} in ${sha}`;

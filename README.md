@@ -9,6 +9,7 @@ This action simplifies the GitHub release process by automatically uploading ass
 - In addition to the changelog, release notes have a section with the sha256 hashes of the artifacts if there are any (again, see [example release](https://github.com/plu5/testing-actions-github/releases/tag/v1.0.1))
 - Use annotated tags instead of lightweight tags, with the ability to pass the tag annotation in new optional parameter `tag_annotation`
 - Different behaviour with the parameter `automatic_release_tag`. In the original action if this parameter is provided, the changelog is generated between the given tag and the previous release with the same tag, resulting in an empty changelog if this is the first release with the given tag. I have changed it to generate the changelog between the given tag and previous tag, rather than the same tag: for example, between v1.0.0 and v1.0.1, rather than v1.0.1 and the previous v1.0.1 release. To get the old behaviour, use `is_tag_static: true`. 
+- In PR commits, avoid adding a link to the PR if it's already in the commit summary ([like #5 or GH-5](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls)) (in the original action we end up with the link appearing twice).
 
 ## Contents
 
