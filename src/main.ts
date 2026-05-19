@@ -24,6 +24,7 @@ type Args = {
   tagAnnotation: string;
   files: string[];
   excludedTypes: string[];
+  preamble: string;
 };
 
 const getAndValidateArgs = (): Args => {
@@ -37,6 +38,7 @@ const getAndValidateArgs = (): Args => {
     tagAnnotation: core.getInput('tag_annotation', {required: false}),
     files: [] as string[],
     excludedTypes: [] as string[],
+    preamble: core.getInput('preamble', {required: false}),
   };
 
   const inputFilesStr = core.getInput('files', {required: false});
@@ -332,13 +334,15 @@ export const main = async (): Promise<void> => {
       });
     }
 
+    const preamble = args.preamble ? args.preamble + '\n\n' : '';
+
     const releaseUploadUrl = await generateNewGitHubRelease(client, {
       ...repoInfo,
       tag_name: releaseTag,
       name: args.releaseTitle ? args.releaseTitle : releaseTag,
       draft: args.draftRelease,
       prerelease: args.preRelease,
-      body: changelog + '\n\n' + checksums,
+      body: preamble + changelog + '\n\n' + checksums,
     });
 
     await uploadReleaseArtifacts(client, releaseUploadUrl, artifactPaths);
