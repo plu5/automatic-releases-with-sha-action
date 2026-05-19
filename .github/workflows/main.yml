@@ -9,6 +9,9 @@ on:
       annotation:
         type: string
         required: false
+      preamble:
+        type: string
+        required: false
   push:
     paths: ['package.json'] # VERSION_FILE
 
@@ -51,3 +54,5 @@ jobs:
           automatic_release_tag: v${{ env.VERSION }}
           tag_annotation: ${{ env.ANNOTATION }}
           prerelease: false
+          excluded_types: chore ci test docs
+          preamble: ${{ inputs.preamble }}
