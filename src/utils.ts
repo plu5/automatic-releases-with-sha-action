@@ -118,7 +118,7 @@ const getFormattedChangelogEntry = (parsedCommit: ParsedCommits): string => {
   return entry;
 };
 
-export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[]): string => {
+export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[], excludedTypes: string[]): string => {
   let changelog = '## What’s Changed\n';
 
   // Breaking Changes
@@ -132,6 +132,10 @@ export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[
   }
 
   for (const key of Object.keys(ConventionalCommitTypes)) {
+    if (excludedTypes.includes(key)) {
+      core.info(`Excluding type ${key}`);
+      continue;
+    }
     const clBlock = parsedCommits
       .filter((val) => val.type === key)
       .map((val) => getFormattedChangelogEntry(val))

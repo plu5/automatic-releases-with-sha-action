@@ -23,6 +23,7 @@ type Args = {
   releaseTitle: string;
   tagAnnotation: string;
   files: string[];
+  excludedTypes: string[];
 };
 
 const getAndValidateArgs = (): Args => {
@@ -35,11 +36,17 @@ const getAndValidateArgs = (): Args => {
     releaseTitle: core.getInput('title', {required: false}),
     tagAnnotation: core.getInput('tag_annotation', {required: false}),
     files: [] as string[],
+    excludedTypes: [] as string[],
   };
 
   const inputFilesStr = core.getInput('files', {required: false});
   if (inputFilesStr) {
     args.files = inputFilesStr.split(/\r?\n/);
+  }
+
+  const inputExcludedTypesStr = core.getInput('excluded_types', {required: false});
+  if (inputExcludedTypesStr) {
+    args.excludedTypes = inputExcludedTypesStr.split(/\r?\n/);
   }
 
   return args;
@@ -199,6 +206,7 @@ export const getChangelog = async (
   owner: string,
   repo: string,
   commits: Octokit.ReposCompareCommitsResponseCommitsItem[],
+  excludedTypes: string[],
 ): Promise<string> => {
   const parsedCommits: ParsedCommits[] = [];
   core.startGroup('Generating changelog');
@@ -246,7 +254,7 @@ export const getChangelog = async (
     core.info(`Adding commit "${parsedCommitMsg.header}" to the changelog`);
   }
 
-  const changelog = generateChangelogFromParsedCommits(parsedCommits);
+  const changelog = generateChangelogFromParsedCommits(parsedCommits, excludedTypes);
   core.debug('Changelog:');
   core.debug(changelog);
 
@@ -303,7 +311,7 @@ export const main = async (): Promise<void> => {
     );
 
     let changelog = appendFullChangelogLink(
-      await getChangelog(client, ...repoInfoArr, commitsSinceRelease),
+      await getChangelog(client, ...repoInfoArr, commitsSinceRelease, args.excludedTypes),
       ...repoInfoArr,
       previousReleaseTag,
       releaseTag
