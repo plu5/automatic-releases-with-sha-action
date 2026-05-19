@@ -25,6 +25,7 @@ type Args = {
   files: string[];
   excludedTypes: string[];
   preamble: string;
+  force: boolean;
 };
 
 const getAndValidateArgs = (): Args => {
@@ -39,6 +40,7 @@ const getAndValidateArgs = (): Args => {
     files: [] as string[],
     excludedTypes: [] as string[],
     preamble: core.getInput('preamble', {required: false}),
+    force: JSON.parse(core.getInput('force', {required: false})),
   };
 
   const inputFilesStr = core.getInput('files', {required: false});
@@ -328,10 +330,12 @@ export const main = async (): Promise<void> => {
         sha: context.sha,
       }, args.tagAnnotation ? args.tagAnnotation : "");
 
-      await deletePreviousGitHubRelease(client, {
-        ...repoInfo,
-        tag: args.automaticReleaseTag,
-      });
+      if (args.force) {
+        await deletePreviousGitHubRelease(client, {
+          ...repoInfo,
+          tag: args.automaticReleaseTag,
+        });
+      }
     }
 
     const preamble = args.preamble ? args.preamble + '\n\n' : '';
