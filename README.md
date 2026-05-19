@@ -21,6 +21,7 @@ This action simplifies the GitHub release process by automatically uploading ass
 1. [Changelog Considerations](#changelog-considerations)
 1. [Stable Versions](#stable-versions)
 1. [License](#license)
+1. [Building](#building)
 1. [Ideas](#ideas)
 
 ## Usage Examples
@@ -208,6 +209,13 @@ If you don't wish to live on the bleeding edge you may use a stable release inst
 ## License
 
 The source code for this project is released under the [MIT License](/LICENSE). This project is not associated with GitHub.
+
+## Building
+```sh
+npm ci
+export NODE_OPTIONS=--openssl-legacy-provider
+npm run build
+```
 
 ## Ideas
 - [ ] regex exclusions
