@@ -223,3 +223,4 @@ npm run build
 - [ ] preview somehow
 - [ ] boolean option to exclude Miscellaneous (commits without types). kind of risky though, what if they misspelled the type in the commit summary?
 - [ ] types headings customisation
+- [ ] When there are breaking changes those commits appear twice: under the section for their respective category (for example, "Features"), and under the section "Breaking Changes". Is this desirable? Should we remove them from the other sections? Should we not have a breaking changes section and instead a different indication?
