@@ -1,6 +1,6 @@
 {
   "name": "automatic-releases-with-sha-action",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "description": "Generate GitHub automatic releases with sha hashes",
   "main": "dist/index.js",
