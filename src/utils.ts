@@ -121,13 +121,23 @@ const getFormattedChangelogEntry = (parsedCommit: ParsedCommits): string => {
 export const isMisc = (type): boolean =>
   type === null || Object.keys(ConventionalCommitTypes).indexOf(type) === -1;
 
-export const getTypeExclamationMarkWorkaround = (header: string): string => {
-  let t = "";  // if failed to find a known type will return empty string
+type ExclamationMarkWorkaround = {
+  type: string;
+  scope: string;
+  subject: string;
+};
+
+export const getExclamationMarkWorkaround = (header: string): ExclamationMarkWorkaround => {
+  let res = {type: "", scope: "", subject: ""};  // if failed to find a known type will return empty
   const knownTypes = Object.keys(ConventionalCommitTypes).join("|");
   // `feat:`, `feat(qwer):`, `feat!:`, `feat(qwer)!:`
-  const m = header.match(`^(${knownTypes})!?((\[^()]*\)!?)?:`);
-  if (m && m.length > 1 && m[1]) t = m[1];
-  return t;
+  const m = header.match(`^(${knownTypes})!?(\\(([^()]*)\\)!?)?: *(.*)`);
+  if (m && m.length > 2) {
+    res.type = m[1];
+    res.scope = m[m.length-2];
+    res.subject = m[m.length-1];
+  }
+  return res;
 }
 
 export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[], excludedTypes: string[]): string => {

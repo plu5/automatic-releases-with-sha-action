@@ -9,7 +9,7 @@ import semverLt from 'semver/functions/lt';
 
 import {getChangelogOptions, dumpGitHubEventPayload} from './utils';
 import {isBreakingChange, generateChangelogFromParsedCommits, parseGitTag,
-        ParsedCommits, isMisc, getTypeExclamationMarkWorkaround,
+        ParsedCommits, isMisc, getExclamationMarkWorkaround,
         appendFullChangelogLink, octokitLogger} from './utils';
 import {getPaths} from './files';
 import {getChecksums} from './sha';
@@ -252,10 +252,15 @@ export const getChangelog = async (
 
     // If a commit with an unknown type has a known type followed by
     // an exclamation mark like `feat!:` or `feat(scope)!:`, fix the
-    // type to what it should be
+    // type to what it should be (and scope and subject, which are
+    // left null also in this case)
     if (isMisc(parsedCommitMsg.type)) {
-      const t = getTypeExclamationMarkWorkaround(parsedCommitMsg.header);
-      if (t) parsedCommitMsg.type = t;
+      const res = getExclamationMarkWorkaround(parsedCommitMsg.header);
+      if (res && res.type) {
+        parsedCommitMsg.type = res.type;
+        parsedCommitMsg.scope = res.scope;
+        parsedCommitMsg.subject = res.subject;
+      }
     }
 
     parsedCommitMsg.extra.breakingChange = isBreakingChange({
