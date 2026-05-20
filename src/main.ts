@@ -9,7 +9,8 @@ import semverLt from 'semver/functions/lt';
 
 import {getChangelogOptions, dumpGitHubEventPayload} from './utils';
 import {isBreakingChange, generateChangelogFromParsedCommits, parseGitTag,
-        ParsedCommits, appendFullChangelogLink, octokitLogger} from './utils';
+        ParsedCommits, isMisc, getTypeExclamationMarkWorkaround,
+        appendFullChangelogLink, octokitLogger} from './utils';
 import {getPaths} from './files';
 import {getChecksums} from './sha';
 import {uploadReleaseArtifacts} from './uploadReleaseArtifacts';
@@ -249,10 +250,19 @@ export const getChangelog = async (
       };
     });
 
+    // If a commit with an unknown type has a known type followed by
+    // an exclamation mark like `feat!:` or `feat(scope)!:`, fix the
+    // type to what it should be
+    if (isMisc(parsedCommitMsg.type)) {
+      const t = getTypeExclamationMarkWorkaround(parsedCommitMsg.header);
+      if (t) parsedCommitMsg.type = t;
+    }
+
     parsedCommitMsg.extra.breakingChange = isBreakingChange({
       body: parsedCommitMsg.body,
       footer: parsedCommitMsg.footer,
     });
+
     core.debug(`Parsed commit: ${JSON.stringify(parsedCommitMsg)}`);
     parsedCommits.push(parsedCommitMsg);
     core.info(`Adding commit "${parsedCommitMsg.header}" to the changelog`);

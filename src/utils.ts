@@ -118,6 +118,18 @@ const getFormattedChangelogEntry = (parsedCommit: ParsedCommits): string => {
   return entry;
 };
 
+export const isMisc = (type): boolean =>
+  type === null || Object.keys(ConventionalCommitTypes).indexOf(type) === -1;
+
+export const getTypeExclamationMarkWorkaround = (header: string): string => {
+  let t = "";  // if failed to find a known type will return empty string
+  const knownTypes = Object.keys(ConventionalCommitTypes).join("|");
+  // `feat:`, `feat(qwer):`, `feat!:`, `feat(qwer)!:`
+  const m = header.match(`^(${knownTypes})!?((\[^()]*\)!?)?:`);
+  if (m && m.length > 1 && m[1]) t = m[1];
+  return t;
+}
+
 export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[], excludedTypes: string[]): string => {
   let changelog = '## What’s Changed\n';
 
@@ -148,7 +160,7 @@ export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[
 
   // Commits
   const commits = parsedCommits
-    .filter((val) => val.type === null || Object.keys(ConventionalCommitTypes).indexOf(val.type) === -1)
+    .filter((val) => isMisc(val.type))
     .map((val) => getFormattedChangelogEntry(val))
     .reduce((acc, line) => `${acc}\n${line}`, '');
   if (commits) {
@@ -159,6 +171,8 @@ export const generateChangelogFromParsedCommits = (parsedCommits: ParsedCommits[
   return changelog.trim();
 };
 
+// Could/should add also if there is an exclamation mark but I worry
+// that it will have false positives
 export const isBreakingChange = ({body, footer}: {body: string; footer: string}): boolean => {
   const re = /^BREAKING\s+CHANGES?:\s+/;
   return re.test(body || '') || re.test(footer || '');

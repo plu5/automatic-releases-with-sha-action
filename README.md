@@ -13,6 +13,7 @@ This action simplifies the GitHub release process by automatically uploading ass
 6. **Commit type exclusions:** Parameter `excluded_types` for excluding commits of given Conventional Commits types. Example: `excluded_types: docs chore revert`
 7. **Preamble:** Parameter `preamble` for markdown to prepend the changelog with, for optionally adding information before the generated list of changes. Tip: With workflow dispatch string inputs, you can modify in Github's HTML `input` to `textarea` with your browser inspector to be able to pass through multiline inputs ([userscript](https://gist.github.com/plu5/dbbe0c3ba407c1e8ed432342edcd70e8) to do this automatically).
 8. **Don't delete previous releases by default:** The old action deletes previous releases on the given tag. This fork doesn't like that destructive behaviour, so by default it does not, and will fail if the tag already exists. Parameter `force` can be set to get the old behaviour.
+9. **Exclamation mark handling:** In Conventional Commits, one of the way to indicate a breaking change is `!` after the type or scope. With the old action, this breaks type detection (for example `feat!` is not detected as type `feat`). The fork works around this issue by checking the commits without a type for the presence of this pattern. However, both in this fork and the original, a commit will only be detected as a breaking change if its body or footer start with "BREAKING CHANGE: " or "BREAKING CHANGES: " (`/^BREAKING\s+CHANGES?:\s+/`).
 
 ## Contents
 
